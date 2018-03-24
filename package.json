@@ -1,0 +1,11 @@
+{
+  "name": "us-congressional-map",
+  "version": "1.0.0",
+  "description": "Create congressional map SVGs on the server.",
+  "main": "index.js",
+  "author": "Austin New <literalsands@gmail.com>",
+  "dependencies": {
+    "d3": "^5.0.0",
+    "jsdom": "^11.6.2"
+  }
+}
