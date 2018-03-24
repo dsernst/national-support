@@ -6,6 +6,7 @@
   "author": "Austin New <literalsands@gmail.com>",
   "dependencies": {
     "d3": "^5.0.0",
-    "jsdom": "^11.6.2"
+    "jsdom": "^11.6.2",
+    "topojson": "^3.0.2"
   }
 }

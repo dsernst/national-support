@@ -2,72 +2,43 @@ const fs = require("fs");
 const d3 = require("d3");
 const JSDOM = require("jsdom/lib/old-api.js");
 
+const drawUSMapD3 = require("./drawUSMapD3");
 
-const withWindow = func =>
+const withWindow = callback =>
   JSDOM.env({
     html: "",
     features: { QuerySelector: true },
-    done: (errors, window) => func(window)
+    done: (errors, window) => callback(window)
   });
 
-const drawUSMapD3 = (data, options, callback) => window => {
-
-  const { height, width } = options;
-
-const arc = d3.arc().outerRadius(chartWidth / 2 - 10).innerRadius(0);
-
-const colours = [
-  "#F00",
-  "#000",
-  "#000",
-  "#000",
-  "#000",
-  "#000",
-  "#000",
-  "#000",
-  "#000"
-];
-
-  window.d3 = d3.select(window.document); //get d3 into the dom
-
-  const svg = window.d3
+const withSVG = (options, callback) => new Promise((resolve, reject) =>
+  withWindow(window => {
+    window.d3 = d3.select(window.document); //get d3 into the dom
+    const svg = window.d3
     .select("body")
     .append("div")
     .attr("class", "container")
     .append("svg")
-
-  svg
     .attr('xmlns', "http://www.w3.org/2000/svg")
-    .attr('width', width)
-    .attr('height', height)
-
-  svg
+    .attr('width', options.width)
+    .attr('height', options.height)
     .append("g")
-    .attr(
-      "transform",
-      "translate(" + chartWidth / 2 + "," + chartWidth / 2 + ")"
-    );
+    //.attr( "transform", "translate(" + options.height / 2 + "," + options.width / 2 + ")");
 
-  svg
-    .selectAll(".arc")
-    .data(d3.pie()(data))
-    .enter()
-    .append("path")
-    .attr('class', 'arc')
-    .attr('d', arc)
-    .attr('fill', (d, i) => colours[i])
-    .attr(
-      'stroke', "#fff"
-    );
+    callback(svg)
+    resolve(window.d3.select(".container").html())
+  })
+)
 
-  callback(window.d3.select(".container").html())
+const drawD3 = (data, options, callback) => svg => {
 };
 
-module.exports = function(pieData = [12, 31], outputLocation = "pie.svg") {
-  withWindow(drawUSMapD3(pieData, drawing => {
+module.exports = function() {
+  withSVG({height: 600, width: 960}, drawUSMapD3({}, {}))
+  .then(drawing => {
     console.log(drawing)
-    fs.writeFileSync(outputLocation, drawing)
-  }))
+    fs.writeFileSync('map.svg', drawing)
+  })
 }
 
 if (require.main === module) {
