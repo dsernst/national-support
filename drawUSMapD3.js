@@ -69,13 +69,14 @@ const STATE_CODES = {
 module.exports = (data, options, callback) => svg => {
   // const { height=960, width=600 } = options;
   const {
-    districtColors = {
+    districtColors = {},
+    /*{
       TX3: "brown",
       GA4: "red",
       MT0: "blue",
       MN1: "blue",
       CA4: "green"
-    },
+    },*/
     defaultColor = "#ccc"
   } = options;
 
