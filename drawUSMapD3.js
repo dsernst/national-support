@@ -75,7 +75,8 @@ module.exports = (data, options, callback) => svg => {
       MT0: "blue",
       MN1: "blue",
       CA4: "green"
-    }
+    },
+    defaultColor = "#ccc"
   } = options;
 
   const projection = d3
@@ -119,7 +120,7 @@ module.exports = (data, options, callback) => svg => {
     .attr("d", path)
     .attr("fill", d => {
       //return d3.interpolateGreens(d.id / 7000);
-      return districtColors[STATE_CODES[Math.floor(d.id / 100)] + d.id % 100]
+      return districtColors[STATE_CODES[Math.floor(d.id / 100)] + d.id % 100] || defaultColor
     });
 
   svg
@@ -155,5 +156,7 @@ module.exports = (data, options, callback) => svg => {
     .attr("stroke", "white")
     .attr("stroke-linejoin", "round")
     .attr("stroke-linecap", "round")
-    .attr("fill", "transparent");
+    .attr("fill", 'none');
+
+  return svg;
 };
