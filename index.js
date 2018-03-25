@@ -10,10 +10,13 @@ const withWindow = callback =>
     done: (errors, window) => callback(window)
   });
 
+/**
+ * @returns Promise
+ */
 const withSVG = (options, callback) =>
   new Promise((resolve, reject) =>
     withWindow(window => {
-      window.d3 = d3.select(window.document); //get d3 into the dom
+      window.d3 = d3.select(window.document); // get d3 into the dom
       const svg = window.d3
         .select("body")
         .append("div")
@@ -32,13 +35,32 @@ const withSVG = (options, callback) =>
 /**
  * @returns Promise
  */
-module.exports = function(data, options = {}) {
-  const svgOptions = {height: options.height || 600, width: options.width || 960}
-  return withSVG(svgOptions, drawUSMapD3(undefined, options))
+module.exports = function(options = {}) {
+  const svgOptions = {
+    height: options.height || 600,
+    width: options.width || 960
+  };
+  return withSVG(svgOptions, drawUSMapD3(undefined, options));
 };
 
+const districts = fs.readFileSync("districts.txt", "utf8").split("\n");
+
+module.exports.districts = districts;
+
 if (require.main === module) {
-  module.exports().then(svg =>
-    fs.writeFile('map.svg', svg, () => {console.info("Wrote map to file 'map.svg'")})
-  )
+  module
+    .exports({
+      districtColors: districts.reduce((colors, district) =>
+        Object.assign(colors, {
+          [district]: d3.interpolateGreens(
+            parseInt(district.slice(2)) / 4 + 0.1
+          )
+        }, {})
+      )
+    })
+    .then(svg =>
+      fs.writeFile("map.svg", svg, () => {
+        console.info("Wrote map to file 'map.svg'");
+      })
+    );
 }

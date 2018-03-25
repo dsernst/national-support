@@ -121,7 +121,8 @@ module.exports = (data, options, callback) => svg => {
     .attr("d", path)
     .attr("fill", d => {
       //return d3.interpolateGreens(d.id / 7000);
-      return districtColors[STATE_CODES[Math.floor(d.id / 100)] + d.id % 100] || defaultColor
+      const color = districtColors[STATE_CODES[Math.floor(d.id / 100)] + d.id % 100]
+      return typeof color === 'string' ? color: defaultColor
     });
 
   svg
